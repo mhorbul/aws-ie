@@ -14,7 +14,7 @@ describe Net::HTTP::AWSSignedPost do
       join("\n")
   end
 
-  let(:query_string) do
+  let(:signed_query_string) do
     "a=1&b=2&Y=10&c=3&d=4" <<
       "&SignatureMethod=HmacSHA1&SignatureVersion=2&" <<
       "Signature=#{signature}"
@@ -34,7 +34,7 @@ describe Net::HTTP::AWSSignedPost do
     request = described_class.new("/")
     request.set_form_data(params)
     request.sign(url, secret_key)
-    request.body.should == query_string
+    request.body.should == signed_query_string
   end
 
 end
