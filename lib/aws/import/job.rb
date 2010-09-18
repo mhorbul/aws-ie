@@ -18,8 +18,14 @@ module AWS
 
       def create(manifest)
         url = URI.parse(API_URL)
+        params = {
+          "Operation" => "CreateJob",
+          "JobType" => "Import",
+          "AWSAccessKeyId" => Config.aws_access_key_id,
+          "Manifest" => manifest
+        }
         req = HTTP::Request.new(url.path)
-        req.set_form_data({ })
+        req.set_form_data(params)
         req.sign(url.host, Config.aws_secret_key_id)
         Net::HTTP.new(url.host, url.port).
           start { |http| http.request(req) }

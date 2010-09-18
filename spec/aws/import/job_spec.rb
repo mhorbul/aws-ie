@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 require 'aws/import/job'
+require 'yaml'
 
 describe AWS::Import::Job do
 
@@ -33,6 +34,11 @@ describe AWS::Import::Job do
     let(:access_key) { "AccessKey12345ABCDE" }
     let(:secret_key) { "SecretKey12345ABCDE" }
 
+    let(:params) do
+      { "JobType" => "Import", "Operation" => "CreateJob",
+        "AWSAccessKeyId" => access_key, "Manifest" => manifest.to_yaml }
+    end
+
     before do
       request
       AWS::HTTP::Request.stub!(:new).and_return(request)
@@ -43,10 +49,10 @@ describe AWS::Import::Job do
 
     it "should prepare the API request" do
       AWS::HTTP::Request.should_receive(:new).and_return(request)
-      request.should_receive(:set_form_data).with({ })
+      request.should_receive(:set_form_data).with(params)
       request.should_receive(:sign).with(url_host, secret_key)
       job = described_class.new
-      job.create(manifest)
+      job.create(manifest.to_yaml)
     end
 
     it "should send API request" do
