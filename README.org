@@ -6,4 +6,31 @@ AWS::Import provides Ruby interface to AWS Import/Export API
 
 * Getting started
 
+require 'aws/import/job'
+
+*** Configure the Import using your access/secret keys
+AWS::Import::Config.aws_access_key_id = "YOUR-ACCESS-KEY"
+AWS::Import::Config.aws_secret_key_id = "YOUR-SECRET-KEY"
+
+*** Build Manifest according to AWS API docs
+manifest = <<EOF
+manifestVersion: 2.0
+bucket: myBucket-Sonian
+accessKeyId: YOUR-ACCESS-KEY
+returnAddress:
+  name: Amazon.com ATTN Joe Random
+  street1: 120 Nosuch Ave S.
+  city: Seattle
+  stateOrProvince: WA
+  postalCode: 91111
+  phoneNumber: 206-266-0000
+  country: USA
+eraseDevice: no
+deviceId: 49382
+EOF
+
+*** Create new Import Job
+job = AWS::Import::Job.new
+job.create(manifest)
+
 
