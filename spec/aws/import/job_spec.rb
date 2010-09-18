@@ -7,7 +7,7 @@ describe AWS::Import::Job do
   describe "when is being created" do
 
     let(:url_path) { "/" }
-    let(:url_host) { "importexport.awsamazon.com" }
+    let(:url_host) { "importexport.amazonaws.com" }
     let(:url_port) { 443 }
 
     let(:request) do
@@ -22,7 +22,8 @@ describe AWS::Import::Job do
       stubs = {
         :start => response,
         :use_ssl= => nil,
-        :request => response
+        :request => response,
+        :set_debug_output => nil
       }
       mock("Net::HTTP", stubs)
     end
@@ -34,13 +35,19 @@ describe AWS::Import::Job do
     let(:access_key) { "AccessKey12345ABCDE" }
     let(:secret_key) { "SecretKey12345ABCDE" }
 
+    let(:timestamp) { Time.now }
+
     let(:params) do
       { "JobType" => "Import", "Operation" => "CreateJob",
-        "AWSAccessKeyId" => access_key, "Manifest" => manifest.to_yaml }
+        "AWSAccessKeyId" => access_key,
+        "Manifest" => manifest.to_yaml,
+        "Timestamp" => timestamp.iso8601 }
     end
 
     before do
       request
+      timestamp
+      Time.should_receive(:now).and_return(timestamp)
       AWS::HTTP::Request.stub!(:new).and_return(request)
       Net::HTTP.stub!(:new).with(url_host, url_port).and_return(http)
       AWS::Import::Config.aws_access_key_id = access_key
@@ -57,6 +64,7 @@ describe AWS::Import::Job do
 
     it "should send API request" do
       Net::HTTP.should_receive(:new).with(url_host, url_port).and_return(http)
+      http.should_receive(:use_ssl=).with(true)
       http.should_receive(:start).and_yield(http)
       http.should_receive(:request).with(request).and_return(response)
       job = described_class.new

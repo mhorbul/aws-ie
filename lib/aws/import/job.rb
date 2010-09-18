@@ -1,9 +1,10 @@
 require 'aws/http/request'
+require 'time'
 
 module AWS
   module Import
 
-    API_URL = "https://importexport.awsamazon.com"
+    API_URL = "https://importexport.amazonaws.com/"
 
     class Config
       class << self
@@ -22,13 +23,16 @@ module AWS
           "Operation" => "CreateJob",
           "JobType" => "Import",
           "AWSAccessKeyId" => Config.aws_access_key_id,
-          "Manifest" => manifest
+          "Manifest" => manifest,
+          "Timestamp" => Time.now.iso8601
         }
+        http = Net::HTTP.new(url.host, url.port)
+        http.set_debug_output(STDOUT)
+        http.use_ssl = true
         req = HTTP::Request.new(url.path)
         req.set_form_data(params)
         req.sign(url.host, Config.aws_secret_key_id)
-        Net::HTTP.new(url.host, url.port).
-          start { |http| http.request(req) }
+        http.start { |http| http.request(req) }
       end
 
     end
