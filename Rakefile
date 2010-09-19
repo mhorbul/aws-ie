@@ -9,3 +9,4 @@ spec = eval(File.read('aws-ie.gemspec'))
 Rake::GemPackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
 end
+
