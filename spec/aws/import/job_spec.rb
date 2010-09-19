@@ -4,6 +4,22 @@ require 'yaml'
 
 describe AWS::Import::Job do
 
+  describe "in general" do
+
+    it "should have manifest" do
+      job = described_class.new
+      job.manifest.should be_nil
+      job.manifest = "manifest content"
+      job.manifest.should == "manifest content"
+    end
+
+    it "should get the parameters from constructor" do
+      job = described_class.new(:manifest => "manifest content")
+      job.manifest.should == "manifest content"
+    end
+
+  end
+
   describe "when is being created" do
 
     let(:url_path) { "/" }

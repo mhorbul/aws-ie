@@ -15,7 +15,12 @@ module AWS
 
     class Job
 
-      attr_reader :id, :manifest
+      attr_reader :id
+      attr_accessor :manifest
+
+      def initialize(attributes = { })
+        @manifest = attributes[:manifest]
+      end
 
       def create(manifest)
         url = URI.parse(API_URL)
