@@ -18,19 +18,30 @@ module AWS
       attr_reader :id
       attr_accessor :manifest
 
-      def initialize(attributes = { })
-        @manifest = attributes[:manifest]
+      class << self
+
+        def create(attributes = { })
+          self.new(attributes) do |job|
+            job.save
+          end
+        end
+
       end
 
-      def create(manifest)
+      def initialize(attributes = { }, &block)
+        @manifest = attributes[:manifest]
+        block.call(self) if block_given?
+      end
+
+      def save
         url = URI.parse(API_URL)
         params = {
           "Operation" => "CreateJob",
           "JobType" => "Import",
           "AWSAccessKeyId" => Config.aws_access_key_id,
-          "Manifest" => manifest,
+          "Manifest" => self.manifest,
           "Timestamp" => Time.now.iso8601
-        }
+          }
         http = Net::HTTP.new(url.host, url.port)
         http.set_debug_output(STDOUT)
         http.use_ssl = true

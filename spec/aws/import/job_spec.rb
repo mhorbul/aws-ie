@@ -74,8 +74,8 @@ describe AWS::Import::Job do
       AWS::HTTP::Request.should_receive(:new).and_return(request)
       request.should_receive(:set_form_data).with(params)
       request.should_receive(:sign).with(url_host, secret_key)
-      job = described_class.new
-      job.create(manifest.to_yaml)
+      described_class.create(:manifest => manifest.to_yaml).
+        should be_instance_of(described_class)
     end
 
     it "should send API request" do
@@ -83,8 +83,8 @@ describe AWS::Import::Job do
       http.should_receive(:use_ssl=).with(true)
       http.should_receive(:start).and_yield(http)
       http.should_receive(:request).with(request).and_return(response)
-      job = described_class.new
-      job.create(manifest)
+      described_class.create(:manifest => manifest.to_yaml).
+        should be_instance_of(described_class)
     end
 
     it "should get the Job ID from response"
