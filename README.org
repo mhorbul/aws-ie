@@ -45,8 +45,13 @@ deviceId: 49382
 EOF
 
 *** Create new Import Job
-job = AWS::Import::Job.new
+job = AWS::Import::Job.new(:manifest => manifest)
+job.save
+job.id # => JobId node value from response (Example: ABC-123)
 
-job.create(manifest)
+or
+
+job = AWS::Import::Job.create(:manifest => manifest)
+job.id # => JobId node value from response (Example: ABC-123)
 
 
