@@ -1,5 +1,6 @@
 require 'aws/http/request'
 require 'time'
+require 'nokogiri'
 
 module AWS
   module Import
@@ -48,7 +49,10 @@ module AWS
         req = HTTP::Request.new(url.path)
         req.set_form_data(params)
         req.sign(url.host, Config.aws_secret_key_id)
-        http.start { |http| http.request(req) }
+        response = http.start { |http| http.request(req) }
+        xml = Nokogiri::XML(response)
+        options = { "ns" => "http://importexport.amazonaws.com/" }
+        @id = xml.root.xpath("//ns:JobId", options).text
       end
 
     end

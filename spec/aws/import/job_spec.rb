@@ -31,7 +31,9 @@ describe AWS::Import::Job do
     end
 
     let(:response) do
-      "<xml />"
+      response_file = File.
+        join(File.dirname(__FILE__), "../../fixtures/create_job_response.xml")
+      File.read(response_file)
     end
 
     let(:http) do
@@ -87,7 +89,10 @@ describe AWS::Import::Job do
         should be_instance_of(described_class)
     end
 
-    it "should get the Job ID from response"
+    it "should get the Job ID from response" do
+      job = described_class.create(:manifest => manifest.to_yaml)
+      job.id.should == "ABC-123"
+    end
 
     describe "and error occures" do
 

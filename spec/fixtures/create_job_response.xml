@@ -1,0 +1,10 @@
+<CreateJobResponse xmlns="http://importexport.amazonaws.com/">
+  <CreateJobResult>
+    <JobId>ABC-123</JobId>
+    <AwsShippingAddress>address</AwsShippingAddress>
+    <Signature>O3qG7xnI46ZEm9gi+eOy9dnSS9k=</Signature>
+  </CreateJobResult>
+  <ResponseMetadata>
+    <RequestId>ace8cb5b-0ada-11df-a381-155bec6f7c93</RequestId>
+  </ResponseMetadata>
+</CreateJobResponse>
