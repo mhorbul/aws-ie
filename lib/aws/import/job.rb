@@ -1,5 +1,6 @@
 require 'aws/http/request'
 require 'time'
+require 'rubygems'
 require 'nokogiri'
 
 module AWS
@@ -39,10 +40,9 @@ module AWS
         params = {
           "Operation" => "CreateJob",
           "JobType" => "Import",
-          "AWSAccessKeyId" => Config.aws_access_key_id,
           "Manifest" => self.manifest,
-          "Timestamp" => Time.now.iso8601
-          }
+          "AWSAccessKeyId" => AWS::Import::Config.aws_access_key_id
+        }
         http = Net::HTTP.new(url.host, url.port)
         http.set_debug_output(STDOUT)
         http.use_ssl = true
@@ -50,7 +50,7 @@ module AWS
         req.set_form_data(params)
         req.sign(url.host, Config.aws_secret_key_id)
         response = http.start { |http| http.request(req) }
-        xml = Nokogiri::XML(response)
+        xml = Nokogiri::XML(response.body)
         options = { "ns" => "http://importexport.amazonaws.com/" }
         @id = xml.root.xpath("//ns:JobId", options).text
       end

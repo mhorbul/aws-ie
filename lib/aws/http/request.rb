@@ -9,11 +9,10 @@ module AWS
 
       def sign(url, aws_secret_key, sep = "\n")
         return if self.body.empty?
-        self.body << "&SignatureMethod=HmacSHA1&SignatureVersion=2"
         digest = Digest::Digest.new('sha1')
         hmac = HMAC.digest(digest, aws_secret_key, canonical_string(url, sep))
-        signature = CGI.escape([hmac].pack("m").strip)
-        self.body << "&Signature=#{signature}"
+        signature = [hmac].pack("m").strip
+        self.body << "&Signature=#{CGI.escape(signature)}"
       end
 
       private
@@ -25,12 +24,15 @@ module AWS
       def canonical_query
         sep = '&'
         equal = '='
-        self.body.split(sep).
-          map { |param| param.split(equal) }.
+        pairs = self.body.split("&")
+        pairs << "SignatureMethod=HmacSHA1"
+        pairs << "SignatureVersion=2"
+        pairs << "Timestamp=#{CGI.escape(Time.now.iso8601)}"
+        self.body = pairs.map { |pair| pair.split(equal) }.
           sort { |a,b| a[0] <=> b[0] }.
           reduce([]) { |r, p| r << p.join(equal) }.join(sep)
       end
 
-      end
+    end
   end
 end

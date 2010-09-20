@@ -33,7 +33,7 @@ describe AWS::Import::Job do
     let(:response) do
       response_file = File.
         join(File.dirname(__FILE__), "../../fixtures/create_job_response.xml")
-      File.read(response_file)
+      mock("Response", :body => File.read(response_file))
     end
 
     let(:http) do
@@ -53,19 +53,15 @@ describe AWS::Import::Job do
     let(:access_key) { "AccessKey12345ABCDE" }
     let(:secret_key) { "SecretKey12345ABCDE" }
 
-    let(:timestamp) { Time.now }
-
     let(:params) do
       { "JobType" => "Import", "Operation" => "CreateJob",
-        "AWSAccessKeyId" => access_key,
         "Manifest" => manifest.to_yaml,
-        "Timestamp" => timestamp.iso8601 }
+        "AWSAccessKeyId"=>"AccessKey12345ABCDE"
+      }
     end
 
     before do
       request
-      timestamp
-      Time.should_receive(:now).and_return(timestamp)
       AWS::HTTP::Request.stub!(:new).and_return(request)
       Net::HTTP.stub!(:new).with(url_host, url_port).and_return(http)
       AWS::Import::Config.aws_access_key_id = access_key
