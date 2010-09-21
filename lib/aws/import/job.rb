@@ -17,6 +17,17 @@ module AWS
           end
         end
 
+        def cancel(job_id)
+          params = {
+            "Operation" => "CancelJob",
+            "JobId" => job_id
+          }
+          xml = self.new.send(:request, params)
+          options = { "ns" => "http://importexport.amazonaws.com/doc/2010-06-01/" }
+          success = xml.root.xpath("//ns:Success", options).text
+          return success == "true"
+        end
+
       end
 
       def initialize(attributes = { }, &block)
@@ -27,17 +38,20 @@ module AWS
       def save
         params = {
           "Operation" => "CreateJob",
-          "JobType" => "Import",
           "Manifest" => self.manifest
         }
-        client = AWS::IE::Client.new
-        response = client.post(params)
-        xml = Nokogiri::XML(response)
+        xml = request(params)
         options = { "ns" => "http://importexport.amazonaws.com/doc/2010-06-01/" }
         @id = xml.root.xpath("//ns:JobId", options).text
         @signature = xml.root.xpath("//ns:Signature", options).text
       end
 
+      private
+      def request(params)
+        params.merge!("JobType" => "Import")
+        client = AWS::IE::Client.new
+        Nokogiri::XML(client.post(params))
+      end
     end
   end
 end

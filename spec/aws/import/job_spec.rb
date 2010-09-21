@@ -4,6 +4,16 @@ require 'yaml'
 
 describe AWS::Import::Job do
 
+  let(:client) do
+    AWS::IE::Client.new
+  end
+
+  let(:response) do
+    File.read(File.join(
+                        File.dirname(__FILE__),
+                        "../../fixtures/#{response_file_name}"))
+  end
+
   describe "in general" do
 
     it "should have manifest" do
@@ -20,17 +30,47 @@ describe AWS::Import::Job do
 
   end
 
+  describe "when is being canceled" do
+
+    let(:params) do
+      {
+        "JobType" => "Import",
+        "Operation" => "CancelJob",
+        "JobId" => "ABC-123"
+      }
+    end
+
+    context "successfully" do
+
+      let(:response_file_name) { "cancel_job_response_successfull.xml" }
+
+      it "should send cancel request and get successfull response" do
+        client
+        AWS::IE::Client.should_receive(:new).and_return(client)
+        client.should_receive(:post).with(params).and_return(response)
+        described_class.cancel("ABC-123").should be_true
+      end
+
+    end
+
+    context "failed" do
+
+      let(:response_file_name) { "cancel_job_response_failed.xml" }
+
+      it "should send cancel request and get failed response" do
+        client
+        AWS::IE::Client.should_receive(:new).and_return(client)
+        client.should_receive(:post).with(params).and_return(response)
+        described_class.cancel("ABC-123").should be_false
+      end
+
+    end
+
+  end
+
   describe "when is being created" do
 
-    let(:url_path) { "/" }
-    let(:url_host) { "importexport.amazonaws.com" }
-    let(:url_port) { 443 }
-
-    let(:response) do
-      response_file = File.
-        join(File.dirname(__FILE__), "../../fixtures/create_job_response.xml")
-      File.read(response_file)
-    end
+    let(:response_file_name) { "create_job_response.xml" }
 
     let(:manifest) do
       { }
@@ -48,10 +88,6 @@ describe AWS::Import::Job do
       client
       AWS::IE::Client.stub!(:new).and_return(client)
       client.stub!(:post).and_return(response)
-    end
-
-    let(:client) do
-      AWS::IE::Client.new
     end
 
     it "should create AWS::IE::Client instance" do

@@ -1,0 +1,8 @@
+<ErrorResponse xmlns="http://importexport.amazonaws.com/doc/2010-06-01/">
+  <Error>
+    <Type>Sender</Type>
+    <Code>InvalidJobIdException</Code>
+    <Message>No such job 4Y8ND-VALIDATE-ONLY for your account</Message>
+  </Error>
+  <RequestId>55fcfc84-c551-11df-ad6c-5731ef5a3d54</RequestId>
+</ErrorResponse>

@@ -1,0 +1,8 @@
+<CancelJobResponse xmlns="http://importexport.amazonaws.com/doc/2010-06-01/">
+  <CancelJobResult>
+    <Success>true</Success>
+  </CancelJobResult>
+  <ResponseMetadata>
+    <RequestId>e19c3dd3-c551-11df-98ab-7b5000aab339</RequestId>
+  </ResponseMetadata>
+</CancelJobResponse>
