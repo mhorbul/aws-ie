@@ -22,7 +22,7 @@ describe AWS::IE::Client do
       "&Operation=CreateJob" +
       "&SignatureMethod=HmacSHA1" +
       "&SignatureVersion=2" +
-      "&Timestamp=#{CGI.escape(timestamp.iso8601)}" +
+      "&Timestamp=2010-09-20T05%3A10%3A35-07%3A00" +
       "&Signature=13q5wczQ49SVVMBngx45FOSCaE4%3D"
   end
 
@@ -54,6 +54,8 @@ describe AWS::IE::Client do
     post_request
     timestamp
     Time.should_receive(:now).and_return(timestamp)
+    described_class.aws_access_key_id = access_key
+    described_class.aws_secret_key_id = secret_key
   end
 
   it "should prepare HTTP Post signed request" do
@@ -62,7 +64,7 @@ describe AWS::IE::Client do
     post_request.should_receive(:body=).with(signed_query_string)
     post_request.should_receive(:content_type=).
       with("application/x-www-form-urlencoded")
-    client = described_class.new(access_key, secret_key)
+    client = described_class.new
     client.post(params)
   end
 
@@ -72,7 +74,7 @@ describe AWS::IE::Client do
     http.should_receive(:start).and_yield(http)
     http.should_receive(:use_ssl=).with(true)
     http.should_receive(:request).with(post_request).and_return(response)
-    client = described_class.new(access_key, secret_key)
+    client = described_class.new
     client.post(params).should == "<xml />"
   end
 

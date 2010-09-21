@@ -1,4 +1,3 @@
-require 'cgi'
 require 'net/http'
 require 'net/https'
 require 'time'
@@ -6,19 +5,26 @@ require 'time'
 module AWS
   class IE
     class Client
-      include OpenSSL
 
       API_URL = "https://importexport.amazonaws.com"
 
-      def initialize(access_key, secret_key)
+      class << self
+        attr_accessor :aws_access_key_id
+        attr_accessor :aws_secret_key_id
+        attr_accessor :test_mode
+      end
+
+      def initialize
         @url = URI.parse(API_URL)
         @url.path = "/" if @url.path.empty?
-        @access_key = access_key
-        @secret_key = secret_key
       end
 
       def post(params)
         request = prepare_request_with_params(params)
+        http = Net::HTTP.new(@url.host, @url.port)
+        http.set_debug_output STDOUT
+        http.use_ssl = true
+        http.start { |http| http.request(request) }.body
       end
 
       private
@@ -26,17 +32,15 @@ module AWS
         request = Net::HTTP::Post.new(@url.path)
         request.body = signed_query_string(params)
         request.content_type = "application/x-www-form-urlencoded"
-        http = Net::HTTP.new(@url.host, @url.port)
-        http.set_debug_output STDOUT
-        http.use_ssl = true
-        http.start { |http| http.request(request) }.body
+        request
       end
 
       def signed_query_string(params)
         canonical_query = canonical_query_string(params)
         canonical_string = ["POST", @url.host, "/", canonical_query].join("\n")
-        digest = Digest::Digest.new('sha1')
-        hmac = HMAC.digest(digest, @secret_key, canonical_string)
+        digest = OpenSSL::Digest::Digest.new('sha1')
+        hmac = OpenSSL::HMAC.
+          digest(digest, self.class.aws_secret_key_id, canonical_string)
         signature = [hmac].pack("m").strip
         canonical_query + "&Signature=" + urlencode(signature)
       end
@@ -44,7 +48,7 @@ module AWS
       def canonical_query_string(params)
         default_params = {
           "Timestamp" => Time.now.iso8601,
-          "AWSAccessKeyId" => @access_key,
+          "AWSAccessKeyId" => self.class.aws_access_key_id,
           "SignatureVersion" => 2,
           "SignatureMethod" => "HmacSHA1"
         }
