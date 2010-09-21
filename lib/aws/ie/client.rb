@@ -12,6 +12,7 @@ module AWS
         attr_accessor :aws_access_key_id
         attr_accessor :aws_secret_key_id
         attr_accessor :test_mode
+        attr_accessor :debug_output
       end
 
       def initialize
@@ -22,7 +23,9 @@ module AWS
       def post(params)
         request = prepare_request_with_params(params)
         http = Net::HTTP.new(@url.host, @url.port)
-        http.set_debug_output STDOUT
+        unless self.class.debug_output.nil?
+          http.set_debug_output(self.class.debug_output)
+        end
         http.use_ssl = true
         http.start { |http| http.request(request) }.body
       end

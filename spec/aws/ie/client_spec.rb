@@ -78,6 +78,22 @@ describe AWS::IE::Client do
     client.post(params).should == "<xml />"
   end
 
+  context "in debug mode" do
+
+    before do
+      AWS::IE::Client.debug_output = STDOUT
+    end
+
+    it "should set debug output" do
+      Net::HTTP.stub!(:new).and_return(http)
+      Net::HTTP::Post.should_receive(:new).with("/").and_return(post_request)
+      http.should_receive(:set_debug_output).with(STDOUT)
+      client = described_class.new
+      client.post(params)
+    end
+
+  end
+
   context "in test mode" do
 
     let(:signed_query_string) do
