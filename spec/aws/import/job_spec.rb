@@ -51,11 +51,24 @@ describe AWS::Import::Job do
     let(:job) { AWS::Import::Job.new }
 
     before do
+      client
       AWS::IE::Client.stub!(:new).and_return(client)
       client.stub!(:post).with(params).and_return(response)
     end
 
-    it "should raise exception when job is not found"
+    context "but job does not exist" do
+
+      let(:response_file_name) do
+        "get_status_response_failed.xml"
+      end
+
+      it "should raise exception when job is not found" do
+        job
+        lambda { AWS::Import::Job.find("ABC-123") }.
+          should raise_error(AWS::Import::Job::JobNotFound)
+      end
+
+    end
 
     it "should send JobStatus API request" do
       client

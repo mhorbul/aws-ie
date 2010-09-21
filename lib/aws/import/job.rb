@@ -6,6 +6,13 @@ module AWS
 
     class Job
 
+      class JobNotFound < Exception
+        attr_accessor :code
+        def to_s
+          "[#{self.code}]: #{self.message}"
+        end
+      end
+
       attr_reader :id, :signature, :status
       attr_accessor :manifest
 
@@ -54,6 +61,13 @@ module AWS
           "JobId" => job_id
         }
         xml = request(params)
+        error = xml.root.xpath("//Error")
+        unless error.empty?
+          exception = JobNotFound.new
+          exception.code = xml.root.xpath("//Error/Code").text
+          exception.code = xml.root.xpath("//Error/Message").text
+          raise exception
+        end
         @id = xml.root.xpath("//JobId").text
         @manifest = xml.root.xpath("//CurrentManifest").text
         @status = {

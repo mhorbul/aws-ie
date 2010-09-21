@@ -1,0 +1,8 @@
+<ErrorResponse xmlns="http://importexport.amazonaws.com/doc/2010-06-01/">
+  <Error>
+    <Type>Sender</Type>
+    <Code>InvalidJobIdException</Code>
+    <Message>No such job ABC-123 for your account</Message>
+  </Error>
+  <RequestId>43b66094-c59c-11df-98ab-7b5000aab339</RequestId>
+</ErrorResponse>
