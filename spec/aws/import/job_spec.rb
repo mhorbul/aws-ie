@@ -64,12 +64,15 @@ describe AWS::Import::Job do
       AWS::Import::Job.find("ABC-123")
     end
 
-    it "should create Job instance" do
+    it "should create Job instance and have all attributes set" do
       job
       AWS::Import::Job.should_receive(:new).and_return(job)
       AWS::Import::Job.find("ABC-123")
       job.manifest.should == manifest
       job.id.should == "ABC-123"
+      job.status[:code].should == "Pending"
+      job.status[:message].should == "The specified job has not started."
+      job.signature.should == "D6j+YqwmWiVXQzuy5Bu0lxehI3E="
     end
 
   end

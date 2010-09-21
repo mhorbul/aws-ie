@@ -6,7 +6,7 @@ module AWS
 
     class Job
 
-      attr_reader :id, :signature
+      attr_reader :id, :signature, :status
       attr_accessor :manifest
 
       class << self
@@ -50,12 +50,17 @@ module AWS
 
       def find(job_id)
         params = {
-            "Operation" => "GetStatus",
+          "Operation" => "GetStatus",
           "JobId" => job_id
         }
         xml = request(params)
         @id = xml.root.xpath("//JobId").text
         @manifest = xml.root.xpath("//CurrentManifest").text
+        @status = {
+          :code => xml.root.xpath("//ProgressCode").text,
+          :message => xml.root.xpath("//ProgressMessage").text
+        }
+        @signature = xml.root.xpath("//Signature").text
         self
       end
 
