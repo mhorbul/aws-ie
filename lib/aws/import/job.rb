@@ -15,7 +15,7 @@ module AWS
 
     class Job
 
-      attr_reader :id
+      attr_reader :id, :signature
       attr_accessor :manifest
 
       class << self
@@ -46,6 +46,7 @@ module AWS
         xml = Nokogiri::XML(response)
         options = { "ns" => "http://importexport.amazonaws.com/doc/2010-06-01/" }
         @id = xml.root.xpath("//ns:JobId", options).text
+        @signature = xml.root.xpath("//ns:Signature", options).text
       end
 
     end

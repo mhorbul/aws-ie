@@ -76,6 +76,11 @@ describe AWS::Import::Job do
       job.id.should == "45HFS-VALIDATE-ONLY"
     end
 
+    it "should have the signature" do
+      job = described_class.create(:manifest => manifest.to_yaml)
+      job.signature.should == "/dxgK27c8++SFiZLLaIvHt4Oy4k="
+    end
+
     describe "and error occures" do
 
       it "should have the error code and description"
