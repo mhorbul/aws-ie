@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
-require 'aws/import/job'
+require 'aws/ie'
 require 'yaml'
 
 describe AWS::Import::Job do
@@ -36,15 +36,11 @@ describe AWS::Import::Job do
       { }
     end
 
-    let(:access_key) { "AccessKey12345ABCDE" }
-    let(:secret_key) { "SecretKey12345ABCDE" }
-
     let(:params) do
       {
         "JobType" => "Import",
         "Operation" => "CreateJob",
-        "Manifest" => manifest.to_yaml,
-        "ValidateOnly" => true
+        "Manifest" => manifest.to_yaml
       }
     end
 
@@ -52,15 +48,14 @@ describe AWS::Import::Job do
       client
       AWS::IE::Client.stub!(:new).and_return(client)
       client.stub!(:post).and_return(response)
-      AWS::Import::Config.aws_access_key_id = access_key
-      AWS::Import::Config.aws_secret_key_id = secret_key
     end
 
-    let(:client) { AWS::IE::Client.new(access_key, secret_key) }
+    let(:client) do
+      AWS::IE::Client.new
+    end
 
     it "should create AWS::IE::Client instance" do
-      AWS::IE::Client.should_receive(:new).
-        with(access_key, secret_key).and_return(client)
+      AWS::IE::Client.should_receive(:new).and_return(client)
       described_class.create(:manifest => manifest.to_yaml).
         should be_instance_of(described_class)
     end
