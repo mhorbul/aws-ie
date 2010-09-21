@@ -18,12 +18,12 @@ describe AWS::IE::Client do
   let(:signed_query_string) do
     "AWSAccessKeyId=ABC-123" +
       "&JobType=Import" +
-      "&Manifest=---+%7B%7D%0A%0A" +
+      "&Manifest=---%20%7B%7D%0A%0A" +
       "&Operation=CreateJob" +
       "&SignatureMethod=HmacSHA1" +
       "&SignatureVersion=2" +
       "&Timestamp=#{CGI.escape(timestamp.iso8601)}" +
-      "&Signature=TmrawVUfcCTcR%2FLYdWyOWeQsgaA%3D"
+      "&Signature=13q5wczQ49SVVMBngx45FOSCaE4%3D"
   end
 
   let(:timestamp) { Time.parse("2010-09-20 05:10:35") }

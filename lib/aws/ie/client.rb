@@ -1,6 +1,7 @@
 require 'cgi'
 require 'net/http'
 require 'net/https'
+require 'time'
 
 module AWS
   class IE
@@ -26,6 +27,7 @@ module AWS
         request.body = signed_query_string(params)
         request.content_type = "application/x-www-form-urlencoded"
         http = Net::HTTP.new(@url.host, @url.port)
+        http.set_debug_output STDOUT
         http.use_ssl = true
         http.start { |http| http.request(request) }.body
       end
@@ -36,7 +38,7 @@ module AWS
         digest = Digest::Digest.new('sha1')
         hmac = HMAC.digest(digest, @secret_key, canonical_string)
         signature = [hmac].pack("m").strip
-        canonical_query + "&Signature=" + CGI.escape(signature)
+        canonical_query + "&Signature=" + urlencode(signature)
       end
 
       def canonical_query_string(params)
@@ -49,8 +51,13 @@ module AWS
         params.merge!(default_params)
         sep = "&"
         params.sort { |a,b| a[0] <=> b[0] }.
-          reduce([]) { |r, p| r << "#{CGI.escape(p[0].to_s)}=#{CGI.escape(p[1].to_s)}" }.
+          reduce([]) { |r, p| r << "#{urlencode(p[0].to_s)}=#{urlencode(p[1].to_s)}" }.
           join(sep)
+      end
+
+      def urlencode(str)
+        r = /[^-_.!~*'()a-zA-Z\d;\/?@&$,\[\]]/n
+        URI.escape(str, r)
       end
     end
   end
