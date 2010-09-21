@@ -78,5 +78,35 @@ describe AWS::IE::Client do
     client.post(params).should == "<xml />"
   end
 
+  context "in test mode" do
+
+    let(:signed_query_string) do
+      "AWSAccessKeyId=ABC-123" +
+        "&JobType=Import" +
+        "&Manifest=---%20%7B%7D%0A%0A" +
+        "&Operation=CreateJob" +
+        "&SignatureMethod=HmacSHA1" +
+        "&SignatureVersion=2" +
+        "&Timestamp=2010-09-20T05%3A10%3A35-07%3A00" +
+        "&ValidateOnly=true" +
+        "&Signature=0Nwu/GrV27CmGMqTS1C3w171jKU%3D"
+    end
+
+    before do
+      AWS::IE::Client.test_mode = true
+    end
+
+    it "should send validate only request" do
+      Net::HTTP.stub!(:new).and_return(http)
+      Net::HTTP::Post.should_receive(:new).with("/").and_return(post_request)
+      post_request.should_receive(:body=).with(signed_query_string)
+      post_request.should_receive(:content_type=).
+        with("application/x-www-form-urlencoded")
+      client = described_class.new
+      client.post(params)
+    end
+
+  end
+
 end
 

@@ -52,6 +52,7 @@ module AWS
           "SignatureVersion" => 2,
           "SignatureMethod" => "HmacSHA1"
         }
+        default_params["ValidateOnly"] = true if self.class.test_mode == true
         params.merge!(default_params)
         sep = "&"
         params.sort { |a,b| a[0] <=> b[0] }.
