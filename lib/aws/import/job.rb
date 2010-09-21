@@ -1,5 +1,3 @@
-require 'aws/http/request'
-require 'time'
 require 'rubygems'
 require 'nokogiri'
 
@@ -36,21 +34,16 @@ module AWS
       end
 
       def save
-        url = URI.parse(API_URL)
         params = {
           "Operation" => "CreateJob",
           "JobType" => "Import",
           "Manifest" => self.manifest,
-          "AWSAccessKeyId" => AWS::Import::Config.aws_access_key_id
+          "ValidateOnly" => true
         }
-        http = Net::HTTP.new(url.host, url.port)
-        http.set_debug_output(STDOUT)
-        http.use_ssl = true
-        req = HTTP::Request.new(url.path)
-        req.set_form_data(params)
-        req.sign(url.host, Config.aws_secret_key_id)
-        response = http.start { |http| http.request(req) }
-        xml = Nokogiri::XML(response.body)
+        client = AWS::IE::Client.new(AWS::Import::Config.aws_access_key_id,
+                                     AWS::Import::Config.aws_secret_key_id)
+        response = client.post(params)
+        xml = Nokogiri::XML(response)
         options = { "ns" => "http://importexport.amazonaws.com/" }
         @id = xml.root.xpath("//ns:JobId", options).text
       end

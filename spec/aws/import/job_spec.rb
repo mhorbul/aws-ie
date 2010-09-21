@@ -26,24 +26,10 @@ describe AWS::Import::Job do
     let(:url_host) { "importexport.amazonaws.com" }
     let(:url_port) { 443 }
 
-    let(:request) do
-      AWS::HTTP::Request.new(url_path)
-    end
-
     let(:response) do
       response_file = File.
         join(File.dirname(__FILE__), "../../fixtures/create_job_response.xml")
-      mock("Response", :body => File.read(response_file))
-    end
-
-    let(:http) do
-      stubs = {
-        :start => response,
-        :use_ssl= => nil,
-        :request => response,
-        :set_debug_output => nil
-      }
-      mock("Net::HTTP", stubs)
+      File.read(response_file)
     end
 
     let(:manifest) do
@@ -54,33 +40,33 @@ describe AWS::Import::Job do
     let(:secret_key) { "SecretKey12345ABCDE" }
 
     let(:params) do
-      { "JobType" => "Import", "Operation" => "CreateJob",
+      {
+        "JobType" => "Import",
+        "Operation" => "CreateJob",
         "Manifest" => manifest.to_yaml,
-        "AWSAccessKeyId"=>"AccessKey12345ABCDE"
+        "ValidateOnly" => true
       }
     end
 
     before do
-      request
-      AWS::HTTP::Request.stub!(:new).and_return(request)
-      Net::HTTP.stub!(:new).with(url_host, url_port).and_return(http)
+      client
+      AWS::IE::Client.stub!(:new).and_return(client)
+      client.stub!(:post).and_return(response)
       AWS::Import::Config.aws_access_key_id = access_key
       AWS::Import::Config.aws_secret_key_id = secret_key
     end
 
-    it "should prepare the API request" do
-      AWS::HTTP::Request.should_receive(:new).and_return(request)
-      request.should_receive(:set_form_data).with(params)
-      request.should_receive(:sign).with(url_host, secret_key)
+    let(:client) { AWS::IE::Client.new(access_key, secret_key) }
+
+    it "should create AWS::IE::Client instance" do
+      AWS::IE::Client.should_receive(:new).
+        with(access_key, secret_key).and_return(client)
       described_class.create(:manifest => manifest.to_yaml).
         should be_instance_of(described_class)
     end
 
     it "should send API request" do
-      Net::HTTP.should_receive(:new).with(url_host, url_port).and_return(http)
-      http.should_receive(:use_ssl=).with(true)
-      http.should_receive(:start).and_yield(http)
-      http.should_receive(:request).with(request).and_return(response)
+      client.should_receive(:post).with(params).and_return(response)
       described_class.create(:manifest => manifest.to_yaml).
         should be_instance_of(described_class)
     end
