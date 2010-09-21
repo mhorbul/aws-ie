@@ -44,7 +44,7 @@ module AWS
                                      AWS::Import::Config.aws_secret_key_id)
         response = client.post(params)
         xml = Nokogiri::XML(response)
-        options = { "ns" => "http://importexport.amazonaws.com/" }
+        options = { "ns" => "http://importexport.amazonaws.com/doc/2010-06-01/" }
         @id = xml.root.xpath("//ns:JobId", options).text
       end
 

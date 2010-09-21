@@ -73,7 +73,7 @@ describe AWS::Import::Job do
 
     it "should get the Job ID from response" do
       job = described_class.create(:manifest => manifest.to_yaml)
-      job.id.should == "ABC-123"
+      job.id.should == "45HFS-VALIDATE-ONLY"
     end
 
     describe "and error occures" do

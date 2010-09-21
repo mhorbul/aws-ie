@@ -1,10 +1,22 @@
-<CreateJobResponse xmlns="http://importexport.amazonaws.com/">
+<CreateJobResponse xmlns="http://importexport.amazonaws.com/doc/2010-06-01/">
   <CreateJobResult>
-    <JobId>ABC-123</JobId>
-    <AwsShippingAddress>address</AwsShippingAddress>
-    <Signature>O3qG7xnI46ZEm9gi+eOy9dnSS9k=</Signature>
+    <JobType>Import</JobType>
+    <JobId>45HFS-VALIDATE-ONLY</JobId>
+    <SignatureFileContents>
+version:2.0
+signingMethod:HmacSHA1
+jobId:45HFS-VALIDATE-ONLY
+signature:/dxgK27c8++SFiZLLaIvHt4Oy4k=
+    </SignatureFileContents>
+    <AwsShippingAddress>
+AWS Import/Export C/O Dynamex
+JOBID 65PXQ-VALIDATE-ONLY
+7664-A Fullerton Road
+Springfield, VA 22153
+    </AwsShippingAddress>
+    <Signature>/dxgK27c8++SFiZLLaIvHt4Oy4k=</Signature>
   </CreateJobResult>
   <ResponseMetadata>
-    <RequestId>ace8cb5b-0ada-11df-a381-155bec6f7c93</RequestId>
+    <RequestId>9fcc5df6-c53a-11df-98ab-7b5000aab339</RequestId>
   </ResponseMetadata>
 </CreateJobResponse>
