@@ -23,9 +23,12 @@ module AWS
             "JobId" => job_id
           }
           xml = self.new.send(:request, params)
-          options = { "ns" => "http://importexport.amazonaws.com/doc/2010-06-01/" }
-          success = xml.root.xpath("//ns:Success", options).text
+          success = xml.root.xpath("//Success").text
           return success == "true"
+        end
+
+        def find(job_id)
+          self.new.find(job_id)
         end
 
       end
@@ -41,16 +44,28 @@ module AWS
           "Manifest" => self.manifest
         }
         xml = request(params)
-        options = { "ns" => "http://importexport.amazonaws.com/doc/2010-06-01/" }
-        @id = xml.root.xpath("//ns:JobId", options).text
-        @signature = xml.root.xpath("//ns:Signature", options).text
+        @id = xml.root.xpath("//JobId").text
+        @signature = xml.root.xpath("//Signature").text
+      end
+
+      def find(job_id)
+        params = {
+            "Operation" => "GetStatus",
+          "JobId" => job_id
+        }
+        xml = request(params)
+        @id = xml.root.xpath("//JobId").text
+        @manifest = xml.root.xpath("//CurrentManifest").text
+        self
       end
 
       private
       def request(params)
         params.merge!("JobType" => "Import")
         client = AWS::IE::Client.new
-        Nokogiri::XML(client.post(params))
+        xml = Nokogiri::XML(client.post(params))
+        xml.remove_namespaces!
+        xml
       end
     end
   end

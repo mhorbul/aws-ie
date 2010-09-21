@@ -4,6 +4,10 @@ require 'yaml'
 
 describe AWS::Import::Job do
 
+  let(:manifest) do
+    File.read(File.join(File.dirname(__FILE__), "../../fixtures/manifest.yml"))
+  end
+
   let(:client) do
     AWS::IE::Client.new
   end
@@ -26,6 +30,46 @@ describe AWS::Import::Job do
     it "should get the parameters from constructor" do
       job = described_class.new(:manifest => "manifest content")
       job.manifest.should == "manifest content"
+    end
+
+  end
+
+  describe "when find a job by id" do
+
+    let(:response_file_name) do
+      "get_status_response_successfull.xml"
+    end
+
+    let(:params) do
+      {
+        "JobType" => "Import",
+        "Operation" => "GetStatus",
+        "JobId" => "ABC-123"
+      }
+    end
+
+    let(:job) { AWS::Import::Job.new }
+
+    before do
+      AWS::IE::Client.stub!(:new).and_return(client)
+      client.stub!(:post).with(params).and_return(response)
+    end
+
+    it "should raise exception when job is not found"
+
+    it "should send JobStatus API request" do
+      client
+      AWS::IE::Client.should_receive(:new).and_return(client)
+      client.should_receive(:post).with(params).and_return(response)
+      AWS::Import::Job.find("ABC-123")
+    end
+
+    it "should create Job instance" do
+      job
+      AWS::Import::Job.should_receive(:new).and_return(job)
+      AWS::Import::Job.find("ABC-123")
+      job.manifest.should == manifest
+      job.id.should == "ABC-123"
     end
 
   end

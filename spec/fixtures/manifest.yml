@@ -1,0 +1,13 @@
+manifestVersion: 2.0
+bucket: import-export-bucket
+accessKeyId: ACCE55KEY1D
+returnAddress:
+  name: Amazon.com ATTN Joe Random
+  street1: 120 Nosuch Ave S.
+  city: Seattle
+  stateOrProvince: WA
+  postalCode: 91111
+  phoneNumber: 206-266-0000
+  country: USA
+eraseDevice: no
+deviceId: 1234567890ABCDEFG

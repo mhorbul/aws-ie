@@ -1,0 +1,42 @@
+<GetStatusResponse xmlns="http://importexport.amazonaws.com/doc/2010-06-01/">
+  <GetStatusResult>
+    <ProgressMessage>The specified job has not started.</ProgressMessage>
+    <JobType>Import</JobType>
+    <CurrentManifest>manifestVersion: 2.0
+bucket: import-export-bucket
+accessKeyId: ACCE55KEY1D
+returnAddress:
+  name: Amazon.com ATTN Joe Random
+  street1: 120 Nosuch Ave S.
+  city: Seattle
+  stateOrProvince: WA
+  postalCode: 91111
+  phoneNumber: 206-266-0000
+  country: USA
+eraseDevice: no
+deviceId: 1234567890ABCDEFG
+</CurrentManifest>
+    <LocationMessage>AWS has not received your device.</LocationMessage>
+    <JobId>ABC-123</JobId>
+    <ProgressCode>Pending</ProgressCode>
+    <SignatureFileContents>
+version:2.0
+signingMethod:HmacSHA1
+jobId:ABC-123
+signature:D6j+YqwmWiVXQzuy5Bu0lxehI3E=
+    </SignatureFileContents>
+    <ErrorCount>0</ErrorCount>
+    <LocationCode>NotReceived</LocationCode>
+    <CreationDate>2010-09-21T16:22:10Z</CreationDate>
+    <AwsShippingAddress>
+AWS Import/Export C/O Dynamex
+JOBID ABC-123
+7664-A Fullerton Road
+Springfield, VA 22153
+    </AwsShippingAddress>
+    <Signature>D6j+YqwmWiVXQzuy5Bu0lxehI3E=</Signature>
+  </GetStatusResult>
+  <ResponseMetadata>
+    <RequestId>62fa6029-c59c-11df-ad6c-5731ef5a3d54</RequestId>
+  </ResponseMetadata>
+</GetStatusResponse>
