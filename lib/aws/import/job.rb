@@ -8,9 +8,6 @@ module AWS
 
       class JobNotFound < Exception
         attr_accessor :code
-        def to_s
-          "[#{self.code}]: #{self.message}"
-        end
       end
 
       attr_reader :id, :signature, :status
