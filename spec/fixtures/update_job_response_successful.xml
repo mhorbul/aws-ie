@@ -1,0 +1,8 @@
+<UpdateJobResponse xmlns="http://importexport.amazonaws.com/doc/2010-06-01/">
+  <UpdateJobResult>
+    <Success>true</Success>
+  </UpdateJobResult>
+  <ResponseMetadata>
+    <RequestId>7e2d1da8-c685-11df-98ab-7b5000aab339</RequestId>
+  </ResponseMetadata>
+</UpdateJobResponse>

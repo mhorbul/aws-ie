@@ -1,0 +1,8 @@
+<ErrorResponse xmlns="http://importexport.amazonaws.com/doc/2010-06-01/">
+  <Error>
+    <Type>Sender</Type>
+    <Code>InvalidJobIdException</Code>
+    <Message>No such job 123456 for your account</Message>
+  </Error>
+  <RequestId>3be7d292-c686-11df-ad6c-5731ef5a3d54</RequestId>
+</ErrorResponse>
