@@ -1,5 +1,5 @@
 require 'rubygems'
 require 'bundler/setup'
 
-require 'ie/client'
-require 'import/job'
+require File.dirname(__FILE__) + '/ie/client'
+require File.dirname(__FILE__) + '/import/job'
