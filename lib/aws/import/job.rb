@@ -4,12 +4,15 @@ require 'nokogiri'
 module AWS
   module Import
 
-    class Job
-
-      class JobNotFound < Exception
-        attr_accessor :code
+    class ResponseError < Exception
+      attr_accessor :code
+      def initialize(options)
+        @code = options[:code]
+        super(options[:message])
       end
+    end
 
+    class Job
       attr_reader :id, :signature, :status
       attr_accessor :manifest
 
@@ -58,13 +61,6 @@ module AWS
           "JobId" => job_id
         }
         xml = request(params)
-        error = xml.root.xpath("//Error")
-        unless error.empty?
-          exception = JobNotFound.new
-          exception.code = xml.root.xpath("//Error/Code").text
-          exception.code = xml.root.xpath("//Error/Message").text
-          raise exception
-        end
         @id = xml.root.xpath("//JobId").text
         @manifest = xml.root.xpath("//CurrentManifest").text
         @status = {
@@ -81,6 +77,11 @@ module AWS
         client = AWS::IE::Client.new
         xml = Nokogiri::XML(client.post(params))
         xml.remove_namespaces!
+        if xml.root.name == "ErrorResponse"
+          code = xml.root.xpath("//Error/Code").text
+          message = xml.root.xpath("//Error/Message").text
+          raise ResponseError.new(:code => code, :message => message)
+        end
         xml
       end
     end
