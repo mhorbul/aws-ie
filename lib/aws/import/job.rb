@@ -46,13 +46,7 @@ module AWS
       end
 
       def save
-        params = {
-          "Operation" => "CreateJob",
-          "Manifest" => self.manifest
-        }
-        xml = request(params)
-        @id = xml.root.xpath("//JobId").text
-        @signature = xml.root.xpath("//Signature").text
+        self.new_job? ? create : update
       end
 
       def find(job_id)
@@ -71,7 +65,32 @@ module AWS
         self
       end
 
+      def new_job?
+        self.id.nil?
+      end
+
       private
+      def create
+        params = {
+          "Operation" => "CreateJob",
+          "Manifest" => self.manifest
+        }
+        xml = request(params)
+        @id = xml.root.xpath("//JobId").text
+        @signature = xml.root.xpath("//Signature").text
+      end
+
+      def update
+        params = {
+          "Operation" => "UpdateJob",
+          "Manifest" => self.manifest,
+          "JobId" => self.id
+        }
+        xml = request(params)
+        success = xml.root.xpath("//Success").text
+        return success == "true"
+      end
+
       def request(params)
         params.merge!("JobType" => "Import")
         client = AWS::IE::Client.new

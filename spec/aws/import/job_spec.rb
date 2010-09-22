@@ -32,6 +32,22 @@ describe AWS::Import::Job do
       job.manifest.should == "manifest content"
     end
 
+    it "should be a new job when it's not saved yet" do
+      job = described_class.new
+      job.should be_new_job
+    end
+
+    it "should not be a new job when it's saved already" do
+      response_file = File.
+        join(File.dirname(__FILE__),
+            "../../fixtures/get_status_response_successfull.xml")
+      response = File.read(response_file)
+      AWS::IE::Client.should_receive(:new).at_least(1).and_return(client)
+      client.should_receive(:post).and_return(response)
+      job = AWS::Import::Job.find("ABC-123")
+      job.should_not be_new_job
+    end
+
   end
 
   describe "when find a job by id" do
@@ -126,6 +142,57 @@ describe AWS::Import::Job do
         rescue AWS::Import::ResponseError => e
           e.code.should == "InvalidJobIdException"
           e.message.should == "No such job 4Y8ND-VALIDATE-ONLY for your account"
+        end
+      end
+
+    end
+
+  end
+
+  describe "when is being updated" do
+
+    let(:response_file_name) { "update_job_response_successful.xml" }
+
+    let(:manifest) { { } }
+
+    let(:params) do
+      {
+        "JobType" => "Import",
+        "Operation" => "UpdateJob",
+        "Manifest" => manifest.to_yaml,
+        "JobId" => "ABC-123"
+      }
+    end
+
+    let(:job) do
+      job = described_class.new
+      job.manifest = manifest.to_yaml
+      job
+    end
+
+    before do
+      client
+      AWS::IE::Client.stub!(:new).and_return(client)
+      client.stub!(:post).and_return(response)
+      job.stub!(:id).and_return("ABC-123")
+    end
+
+    it "should update the existing job" do
+      AWS::IE::Client.should_receive(:new).and_return(client)
+      client.should_receive(:post).with(params).and_return(response)
+      job.save.should be_true
+    end
+
+    describe "when update API call is failed" do
+
+    let(:response_file_name) { "update_job_response_failed.xml" }
+
+      it "should raise exception" do
+        begin
+          job.save
+        rescue AWS::Import::ResponseError => e
+          e.code.should == "InvalidJobIdException"
+          e.message.should == "No such job 123456 for your account"
         end
       end
 
