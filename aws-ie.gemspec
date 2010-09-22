@@ -13,5 +13,19 @@ Gem::Specification.new do |s|
   s.email             = 'max@gorbul.net'
   s.homepage          = 'http://www.gorbul.net'
 
-  s.add_dependency('bundler',        '~> 1.0.0')
+  require "bundler/setup"
+
+  s.files = [
+    "README.org",
+    "COPYING",
+    "Gemfile",
+    "Rakefile",
+    "VERSION",
+    "aws-ie.gemspec",
+    "lib/aws/ie.rb",
+    "lib/aws/import/job.rb",
+    "lib/aws/ie/client.rb",
+    "spec/aws/import/job_spec.rb",
+    "spec/aws/ie/client_spec.rb"
+  ]
 end
