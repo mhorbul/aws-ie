@@ -65,7 +65,7 @@ describe AWS::Import::Job do
       it "should raise exception when job is not found" do
         job
         lambda { AWS::Import::Job.find("ABC-123") }.
-          should raise_error(AWS::Import::Job::JobNotFound)
+          should raise_error(AWS::Import::ResponseError)
       end
 
     end
@@ -121,7 +121,12 @@ describe AWS::Import::Job do
         client
         AWS::IE::Client.should_receive(:new).and_return(client)
         client.should_receive(:post).with(params).and_return(response)
-        described_class.cancel("ABC-123").should be_false
+        begin
+          described_class.cancel("ABC-123")
+        rescue AWS::Import::ResponseError => e
+          e.code.should == "InvalidJobIdException"
+          e.message.should == "No such job 4Y8ND-VALIDATE-ONLY for your account"
+        end
       end
 
     end
@@ -174,8 +179,16 @@ describe AWS::Import::Job do
 
     describe "and error occures" do
 
-      it "should have the error code and description"
-      it "should not get the Job ID"
+      let(:response_file_name) { "create_job_response_failed.xml" }
+
+      it "should return not saved job with errors inside" do
+        begin
+          job = described_class.create
+        rescue AWS::Import::ResponseError => e
+          e.code.should == "MissingParameterException"
+          e.message.should == "Manifest must be specified"
+        end
+      end
 
     end
 

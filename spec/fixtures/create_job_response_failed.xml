@@ -1,0 +1,8 @@
+<ErrorResponse xmlns="http://importexport.amazonaws.com/doc/2010-06-01/">
+  <Error>
+    <Type>Sender</Type>
+    <Code>MissingParameterException</Code>
+    <Message>Manifest must be specified</Message>
+  </Error>
+  <RequestId>6baecaa0-c673-11df-98ab-7b5000aab339</RequestId>
+</ErrorResponse>
