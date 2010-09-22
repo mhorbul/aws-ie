@@ -22,8 +22,8 @@ describe AWS::IE::Client do
       "&Operation=CreateJob" +
       "&SignatureMethod=HmacSHA1" +
       "&SignatureVersion=2" +
-      "&Timestamp=2010-09-20T05%3A10%3A35-07%3A00" +
-      "&Signature=13q5wczQ49SVVMBngx45FOSCaE4%3D"
+      "&Timestamp=2010-09-20T05%3A10%3A35%2B00%3A00" +
+      "&Signature=hmgL0julWxoVXeYHHqFQAbvmaL4%3D"
   end
 
   let(:timestamp) { Time.parse("2010-09-20 05:10:35") }
@@ -103,9 +103,9 @@ describe AWS::IE::Client do
         "&Operation=CreateJob" +
         "&SignatureMethod=HmacSHA1" +
         "&SignatureVersion=2" +
-        "&Timestamp=2010-09-20T05%3A10%3A35-07%3A00" +
+        "&Timestamp=2010-09-20T05%3A10%3A35%2B00%3A00" +
         "&ValidateOnly=true" +
-        "&Signature=0Nwu/GrV27CmGMqTS1C3w171jKU%3D"
+        "&Signature=%2BOIG/6ouAbS/I2vTQZYFsgUKk3Y%3D"
     end
 
     before do
