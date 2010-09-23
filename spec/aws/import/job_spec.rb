@@ -18,6 +18,11 @@ describe AWS::Import::Job do
                         "../../fixtures/#{response_file_name}"))
   end
 
+  before do
+    client.stub!(:post).and_return("<xml />")
+    described_class.client = client
+  end
+
   describe "in general" do
 
     it "should have manifest" do
@@ -37,12 +42,19 @@ describe AWS::Import::Job do
       job.should be_new_job
     end
 
+    it "should create only one instance of the IE::Client" do
+      described_class.client = nil
+      AWS::IE::Client.should_receive(:new).once.and_return(client)
+      job = described_class.new
+      job.save
+      described_class.find("ABC-123")
+    end
+
     it "should not be a new job when it's saved already" do
       response_file = File.
         join(File.dirname(__FILE__),
             "../../fixtures/get_status_response_successfull.xml")
       response = File.read(response_file)
-      AWS::IE::Client.should_receive(:new).at_least(1).and_return(client)
       client.should_receive(:post).and_return(response)
       job = AWS::Import::Job.find("ABC-123")
       job.should_not be_new_job
@@ -67,8 +79,6 @@ describe AWS::Import::Job do
     let(:job) { AWS::Import::Job.new }
 
     before do
-      client
-      AWS::IE::Client.stub!(:new).and_return(client)
       client.stub!(:post).with(params).and_return(response)
     end
 
@@ -87,8 +97,6 @@ describe AWS::Import::Job do
     end
 
     it "should send JobStatus API request" do
-      client
-      AWS::IE::Client.should_receive(:new).and_return(client)
       client.should_receive(:post).with(params).and_return(response)
       AWS::Import::Job.find("ABC-123")
     end
@@ -121,8 +129,6 @@ describe AWS::Import::Job do
       let(:response_file_name) { "cancel_job_response_successfull.xml" }
 
       it "should send cancel request and get successfull response" do
-        client
-        AWS::IE::Client.should_receive(:new).and_return(client)
         client.should_receive(:post).with(params).and_return(response)
         described_class.cancel("ABC-123").should be_true
       end
@@ -134,8 +140,6 @@ describe AWS::Import::Job do
       let(:response_file_name) { "cancel_job_response_failed.xml" }
 
       it "should send cancel request and get failed response" do
-        client
-        AWS::IE::Client.should_receive(:new).and_return(client)
         client.should_receive(:post).with(params).and_return(response)
         begin
           described_class.cancel("ABC-123")
@@ -165,20 +169,16 @@ describe AWS::Import::Job do
     end
 
     let(:job) do
-      job = described_class.new
-      job.manifest = manifest.to_yaml
-      job
+      job = described_class.new do |j|
+        j.manifest = manifest.to_yaml
+      end
     end
 
     before do
-      client
-      AWS::IE::Client.stub!(:new).and_return(client)
-      client.stub!(:post).and_return(response)
       job.stub!(:id).and_return("ABC-123")
     end
 
     it "should update the existing job" do
-      AWS::IE::Client.should_receive(:new).and_return(client)
       client.should_receive(:post).with(params).and_return(response)
       job.save.should be_true
     end
@@ -217,13 +217,10 @@ describe AWS::Import::Job do
     end
 
     before do
-      client
-      AWS::IE::Client.stub!(:new).and_return(client)
-      client.stub!(:post).and_return(response)
+      client.stub!(:post).with(params).and_return(response)
     end
 
     it "should create AWS::IE::Client instance" do
-      AWS::IE::Client.should_receive(:new).and_return(client)
       described_class.create(:manifest => manifest.to_yaml).
         should be_instance_of(described_class)
     end

@@ -18,6 +18,8 @@ module AWS
 
       class << self
 
+        attr_accessor :client
+
         def create(attributes = { })
           self.new(attributes) do |job|
             job.save
@@ -92,9 +94,9 @@ module AWS
       end
 
       def request(params)
+        self.class.client ||= AWS::IE::Client.new
         params.merge!("JobType" => "Import")
-        client = AWS::IE::Client.new
-        xml = Nokogiri::XML(client.post(params))
+        xml = Nokogiri::XML(self.class.client.post(params))
         xml.remove_namespaces!
         if xml.root.name == "ErrorResponse"
           code = xml.root.xpath("//Error/Code").text
