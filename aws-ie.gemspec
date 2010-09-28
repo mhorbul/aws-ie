@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
 
   s.author            = 'Maksim Horbul'
   s.email             = 'max@gorbul.net'
-  s.homepage          = 'http://www.gorbul.net'
 
   s.files = [
     "README.org",
