@@ -105,7 +105,7 @@ describe AWS::IE::Client do
         "&SignatureVersion=2" +
         "&Timestamp=2010-09-20T05%3A10%3A35%2B00%3A00" +
         "&ValidateOnly=true" +
-        "&Signature=%2BOIG/6ouAbS/I2vTQZYFsgUKk3Y%3D"
+        "&Signature=%2BOIG%2F6ouAbS%2FI2vTQZYFsgUKk3Y%3D"
     end
 
     before do

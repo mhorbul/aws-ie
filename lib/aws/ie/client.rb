@@ -64,7 +64,7 @@ module AWS
       end
 
       def urlencode(str)
-        r = /[^-_.!~*'()a-zA-Z\d;\/?@&$,\[\]]/n
+        r = /[^-_.!~*'()a-zA-Z\d;?@&$,\[\]]/n
         URI.escape(str, r)
       end
     end
