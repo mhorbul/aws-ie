@@ -5,5 +5,5 @@ $:.push File.join(File.dirname(__FILE__), '..', 'lib')
 ENV["TZ"] = "UTC"
 
 require 'rubygems'
-require 'bundler/setup'
-Bundler.require(:default)
+require 'bundler'
+Bundler.setup

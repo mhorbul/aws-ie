@@ -1,12 +1,6 @@
-require 'rubygems'
-require 'rake'
-require 'rake/gempackagetask'
+require 'bundler'
 require 'spec/rake/spectask'
 
+Bundler::GemHelper.install_tasks
 Spec::Rake::SpecTask.new
-
-spec = eval(File.read('aws-ie.gemspec'))
-Rake::GemPackageTask.new(spec) do |pkg|
-  pkg.gem_spec = spec
-end
 
