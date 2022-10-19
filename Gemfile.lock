@@ -7,7 +7,7 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
-    nokogiri (1.4.3.1)
+    nokogiri (1.5.11)
     rspec (1.3.1)
 
 PLATFORMS
@@ -16,5 +16,4 @@ PLATFORMS
 DEPENDENCIES
   aws-ie!
   bundler (>= 1.0.0)
-  nokogiri (>= 1.4.3.1)
   rspec (>= 1.3.0)
